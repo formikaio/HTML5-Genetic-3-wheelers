@@ -361,6 +361,12 @@ function cw_generationZero() {
   document.getElementById("generation").innerHTML = "Generation 0";
   document.getElementById("population").innerHTML = "Cars alive: "+generationSize;
   ghost = ghost_create_ghost();
+  
+  if (_gaq != undefined) {
+    _gaq.push(['_trackEvent', 'Genetic', 'New generation']);
+  } else if (ga != undefined) {
+    ga('send', 'event', 'generation', 'new', 'New generation');
+  }
 }
 
 function cw_materializeGeneration() {
@@ -834,8 +840,10 @@ function cw_newRound() {
     // RE-ENABLE GHOST
     ghost_reset_ghost(ghost);
 
-    world = new b2World(gravity, doSleep);
-    cw_createFloor();
+    // CHECK GRAVITY CHANGES
+    if (world.GetGravity().y != gravity.y) {
+      world.SetGravity(gravity);
+    }
   }
 
   cw_nextGeneration();
